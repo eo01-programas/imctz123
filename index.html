@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cotización de Costura | Ingeniería de Métodos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="cs/style.css">
+  <style>.version-subinfo { font-size: 0.875em; color: #666; margin-top: 0.25rem; }</style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-card">
+        <p class="brand-kicker">Ingeniería de Métodos</p>
+        <h1>Cotización de Costura</h1>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Navegación lateral">
+        <button id="newPrototypeBtn" class="nav-button is-active" data-view="editor" type="button">Nuevo prototipo</button>
+        <button id="openSearchBtn" class="nav-button" data-view="search" type="button">Buscar</button>
+      </nav>
+
+      <div class="sidebar-tip">
+        <p class="tip-title">Flujo sugerido</p>
+        <p>Ingresa códigos en la tabla, valida tiempos, guarda y luego consulta por <strong>PROTO</strong> para revisar versiones.</p>
+      </div>
+
+      <button id="openMasterBtn" class="nav-button" data-view="master" type="button" style="margin-top: auto;">Maestro de operaciones</button>
+    </aside>
+
+    <main class="workspace">
+      <div class="search-version-grid">
+        <section id="searchPanel" class="panel search-panel hidden" aria-labelledby="searchTitle">
+        <div class="panel-header panel-header-between search-panel-header">
+          <h3 id="searchTitle">Cotiz x Proto</h3>
+          <div class="search-row search-row-inline">
+            <label class="search-input-wrap search-input-wrap-inline" for="searchProtoInput">
+              <span>PROTO:</span>
+              <input
+                id="searchProtoInput"
+                type="text"
+                inputmode="numeric"
+                maxlength="5"
+                pattern="\d{5}"
+                autocomplete="off"
+              >
+            </label>
+            <button
+              id="searchBtn"
+              class="secondary-button search-inline-button save-icon-button"
+              type="button"
+              aria-label="Buscar"
+              title="Buscar"
+            >
+              <svg class="save-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M10.5 4a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13zm0 1.8a4.7 4.7 0 1 0 0 9.4 4.7 4.7 0 0 0 0-9.4zm8.37 11.1 2.63 2.63-1.27 1.27-2.63-2.63 1.27-1.27z" fill="currentColor"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div id="searchSummary" class="search-summary hidden" aria-hidden="true"></div>
+        </section>
+
+        <section id="versionPanel" class="panel version-panel hidden" aria-labelledby="versionTitle">
+        <div class="panel-header version-panel-header">
+          <div class="version-heading">
+            <h3 id="versionTitle">Versiones</h3>
+            <p id="versionSubinfo" class="version-subinfo"></p>
+          </div>
+          <div id="versionTabs" class="version-tabs" role="tablist" aria-label="Versiones del prototipo"></div>
+          <div class="version-panel-actions">
+            <p id="versionInfo" class="version-info"></p>
+            <button
+              id="editVersionBtn"
+              class="tertiary-button version-action-button save-icon-button"
+              type="button"
+              aria-label="Editar versión"
+              title="Editar versión"
+              disabled
+            >
+              <svg class="save-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm2.92 2.33H5v-.92l9.06-9.06.92.92L5.92 19.58zM20.71 7.04a1.003 1.003 0 0 0 0-1.42L18.37 3.29a1.003 1.003 0 0 0-1.42 0L15.13 5.1l3.75 3.75 1.83-1.81z" fill="currentColor"/>
+              </svg>
+            </button>
+            <button
+              id="newVersionBtn"
+              class="secondary-button version-action-button save-icon-button"
+              type="button"
+              aria-label="Nueva Version"
+              title="Nueva Version"
+              disabled
+            >
+              <svg class="save-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 3h7l5 5v13H7c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2zm7 1.5V9h4.5L14 4.5zM9 12h6v1.5H9V12zm0 3h6v1.5H9V15z" fill="currentColor"/>
+              </svg>
+            </button>
+            <button
+              id="printRecordBtn"
+              class="version-action-button save-icon-button print-action-button"
+              type="button"
+              aria-label="Imprimir"
+              title="Imprimir"
+              disabled
+            >
+              <svg class="save-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 7V3h10v4H7zm8-2H9v2h6V5zM6 9h12a3 3 0 0 1 3 3v4h-3v5H6v-5H3v-4a3 3 0 0 1 3-3zm10 10v-5H8v5h8zm2-7a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" fill="currentColor"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        </section>
+      </div>
+
+      <section id="formPanel" class="panel form-panel" aria-labelledby="formTitle">
+        <div class="panel-header panel-header-between">
+          <div>
+            <h3 id="formTitle">Información general de la prenda</h3>
+          </div>
+          <div class="form-panel-actions">
+            <p id="formRecordInfo" class="form-record-info"></p>
+            <button
+              id="saveBtn"
+              class="primary-button save-icon-button"
+              type="button"
+              aria-label="Guardar cotización"
+              title="Guardar cotización"
+            >
+              <svg class="save-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 3h11l3 3v15H5V3zm2 2v5h8V5H7zm0 14h10v-7H7v7zm2-2v-3h6v3H9z" fill="currentColor"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <label class="field">
+            <span>Cliente</span>
+            <div class="client-field-row">
+              <select id="clienteSelect" autocomplete="off"></select>
+              <button
+                id="deleteClientBtn"
+                class="delete-client-button hidden"
+                type="button"
+                aria-label="Eliminar cliente personalizado"
+                title="Eliminar cliente personalizado"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M9 3h6l1 2h4v2H4V5h4l1-2zm1 6h2v8h-2V9zm4 0h2v8h-2V9zM7 9h2v8H7V9z" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+            <input id="clienteCustomInput" class="hidden" type="text" autocomplete="off" placeholder="Ingresa nuevo cliente">
+          </label>
+          <label class="field">
+            <span>PROTO</span>
+            <input id="protoInput" type="text" inputmode="numeric" maxlength="5" pattern="\d{5}" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>Versión</span>
+            <input id="versionInput" type="text" inputmode="numeric" maxlength="2" pattern="\d{1,2}" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>IDEM</span>
+            <input id="idemInput" type="text" inputmode="numeric" maxlength="2" pattern="\d{1,2}" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>Estilo</span>
+            <input id="estiloInput" type="text" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>Tela</span>
+            <input id="telaInput" type="text" autocomplete="off">
+          </label>
+
+          <label class="field field-span-2">
+            <span>Descripción</span>
+            <input id="descripcionInput" type="text" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>Realizado por</span>
+            <input id="realizadoPorInput" type="text" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>Producción estimada</span>
+            <input id="produccionEstimadaInput" type="text" inputmode="numeric" autocomplete="off">
+          </label>
+          <label class="field field-span-2">
+            <span>Rutas y procesos</span>
+            <input id="rutasProcesosInput" type="text" autocomplete="off">
+          </label>
+        </div>
+      </section>
+
+      <div class="tabs-container panel-tabs">
+        <button id="tabCostura" class="tab-button is-active" type="button" data-target="costuraPanel">Costura</button>
+        <button id="tabCorte" class="tab-button" type="button" data-target="cortePanel">Corte</button>
+        <button id="tabAcabado" class="tab-button" type="button" data-target="acabadoPanel">Acabados</button>
+        <button id="tabResumen" class="tab-button" type="button" data-target="resumenPanel">RESUMEN</button>
+      </div>
+
+      <section id="costuraPanel" class="panel table-panel" aria-label="Costura">
+        <div class="panel-header panel-header-between">
+          <div>
+            <p class="eyebrow">Costura</p>
+          </div>
+
+          <div class="table-actions">
+            <button id="addRowBtn" class="table-action-button table-action-button-add" type="button" aria-label="Agregar fila" title="Agregar fila">+</button>
+            <button id="removeRowBtn" class="table-action-button table-action-button-remove" type="button" aria-label="Eliminar última fila" title="Eliminar última fila">-</button>
+            <button id="clearTableBtn" class="table-action-button table-action-button-clear" type="button" aria-label="Limpiar tabla" title="Limpiar tabla">
+              <svg class="clear-table-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 18c3.5-2.8 5.8-6.3 7-10l5.5 5.5c.8.8.8 2.1 0 2.9l-1.6 1.6H8.2L6 20.1C5 21.1 3.3 21.1 2.3 20.1l-.4-.4L3 18zm13.7-11.3 1.6-1.6c.8-.8 2.1-.8 2.9 0l.4.4c.8.8.8 2.1 0 2.9l-1.6 1.6-3.3-3.3z" fill="currentColor"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="costura-table">
+            <colgroup>
+              <col style="width: 8%;">
+              <col style="width: 8%;">
+              <col style="width: 25%;">
+              <col style="width: 7%;">
+              <col style="width: 5%;">
+              <col style="width: 9%;">
+              <col style="width: 5%;">
+              <col style="width: 10%;">
+              <col style="width: 10%;">
+              <col style="width: 11%;">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>CODIGO</th>
+                <th>BLOQUE</th>
+                <th>OPERACIONES</th>
+                <th>Tiempos<br>Estimado</th>
+                <th>Tipo<br>MAQ</th>
+                <th>%<br>Proteccion</th>
+                <th>Tipo<br>PTA</th>
+                <th>Tiempos Maq<br>c/protecc.</th>
+                <th>Tiempos Manual<br>c/protecc.</th>
+                <th>Tiempos<br>Cotizacion</th>
+              </tr>
+            </thead>
+            <tbody id="costuraTableBody"></tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3" class="tfoot-label">TOTAL TIEMPO COTIZACIÓN</td>
+                <td id="estimatedFooterValue">0.000</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td id="maqFooterValue">0.000</td>
+                <td id="manualFooterValue">0.000</td>
+                <td id="cotizacionFooterValue">0.000</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+      <section id="cortePanel" class="panel table-panel hidden" aria-label="Corte">
+        <div class="panel-header panel-header-between">
+          <div>
+            <p class="eyebrow">Corte</p>
+          </div>
+          <div class="table-actions">
+            <button id="addCorteRowBtn" class="table-action-button table-action-button-add" type="button" title="Agregar fila">+</button>
+            <button id="removeCorteRowBtn" class="table-action-button table-action-button-remove" type="button" title="Eliminar última fila">-</button>
+            <button id="clearCorteTableBtn" class="table-action-button table-action-button-clear" type="button" title="Limpiar tabla">
+              <svg class="clear-table-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18c3.5-2.8 5.8-6.3 7-10l5.5 5.5c.8.8.8 2.1 0 2.9l-1.6 1.6H8.2L6 20.1C5 21.1 3.3 21.1 2.3 20.1l-.4-.4L3 18zm13.7-11.3 1.6-1.6c.8-.8 2.1-.8 2.9 0l.4.4c.8.8.8 2.1 0 2.9l-1.6 1.6-3.3-3.3z" fill="currentColor"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="costura-table corte-table">
+            <colgroup>
+              <col style="width: 25%;">
+              <col style="width: 10%;">
+              <col style="width: 10%;">
+              <col style="width: 8%;">
+              <col style="width: 8%;">
+              <col style="width: 12%;">
+              <col style="width: 12%;">
+              <col style="width: 15%;">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>OPERACIONES</th>
+                <th>Tiempos<br>Estimado Corte</th>
+                <th>Tiempos<br>Estimado Habilitado</th>
+                <th>%<br>Proteccion</th>
+                <th>Area</th>
+                <th>Tiempos CORTE<br>c/protecc.</th>
+                <th>Tiempos HAB<br>c/protecc.</th>
+                <th>Tiempos<br>Cotizacion</th>
+              </tr>
+            </thead>
+            <tbody id="corteTableBody"></tbody>
+            <tfoot>
+              <tr>
+                <td class="tfoot-label">TOTAL TIEMPO COTIZACION</td>
+                <td id="estimatedCorteFooterValue">0.000</td>
+                <td id="estimatedHabFooterValue">0.000</td>
+                <td></td>
+                <td></td>
+                <td id="corteFooterValue">0.000</td>
+                <td id="habFooterValue">0.000</td>
+                <td id="cotizacionCorteFooterValue">0.000</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+      <section id="acabadoPanel" class="panel table-panel hidden" aria-label="Acabados">
+        <div class="panel-header panel-header-between">
+          <div>
+            <p class="eyebrow">Acabados</p>
+          </div>
+          <div class="table-actions">
+            <button id="addAcabadoRowBtn" class="table-action-button table-action-button-add" type="button" title="Agregar fila">+</button>
+            <button id="removeAcabadoRowBtn" class="table-action-button table-action-button-remove" type="button" title="Eliminar última fila">-</button>
+            <button id="clearAcabadoTableBtn" class="table-action-button table-action-button-clear" type="button" title="Limpiar tabla">
+              <svg class="clear-table-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18c3.5-2.8 5.8-6.3 7-10l5.5 5.5c.8.8.8 2.1 0 2.9l-1.6 1.6H8.2L6 20.1C5 21.1 3.3 21.1 2.3 20.1l-.4-.4L3 18zm13.7-11.3 1.6-1.6c.8-.8 2.1-.8 2.9 0l.4.4c.8.8.8 2.1 0 2.9l-1.6 1.6-3.3-3.3z" fill="currentColor"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="costura-table acabado-table">
+            <colgroup>
+              <col style="width: 40%;">
+              <col style="width: 20%;">
+              <col style="width: 20%;">
+              <col style="width: 20%;">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>OPERACIONES</th>
+                <th>Tiempos<br>Estimado</th>
+                <th>%<br>Proteccion</th>
+                <th>Tiempos<br>Cotizacion</th>
+              </tr>
+            </thead>
+            <tbody id="acabadoTableBody"></tbody>
+            <tfoot>
+              <tr>
+                <td class="tfoot-label">TOTAL TIEMPO COTIZACION</td>
+                <td id="estimatedAcabadoFooterValue">0.000</td>
+                <td></td>
+                <td id="cotizacionAcabadoFooterValue">0.000</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+      <section id="resumenPanel" class="panel table-panel hidden" aria-label="RESUMEN">
+        <div class="panel-header panel-header-between">
+          <div>
+            <p class="eyebrow">RESUMEN</p>
+          </div>
+        </div>
+        <div class="table-wrapper resumen-wrapper">
+          <table class="costura-table resumen-table">
+            <colgroup>
+              <col style="width: 75%;">
+              <col style="width: 25%;">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>TIEMPO POR AREA</th>
+                <th>Tiempos<br>Cotizacion</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="resumen-label">TIEMPO CORTE + HABILITADO</td>
+                <td id="resumenCorteTotalValue" class="resumen-value">0.00</td>
+              </tr>
+              <tr>
+                <td class="resumen-label">TIEMPO COSTURA MAQUINA</td>
+                <td id="resumenCosturaMaqValue" class="resumen-value">0.00</td>
+              </tr>
+              <tr>
+                <td class="resumen-label">TIEMPO COSTURA MANUAL</td>
+                <td id="resumenCosturaManualValue" class="resumen-value">0.00</td>
+              </tr>
+              <tr class="resumen-highlight-row">
+                <td class="resumen-label">TOTAL COSTURA TOTAL</td>
+                <td id="resumenCosturaTotalValue" class="resumen-value">0.00</td>
+              </tr>
+              <tr>
+                <td class="resumen-label">TIEMPO ACABADOS</td>
+                <td id="resumenAcabadosValue" class="resumen-value">0.00</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td class="tfoot-label">TOTAL TIEMPO COTIZADO</td>
+                <td id="resumenGranTotalValue">0.00</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+      <section id="masterPanel" class="panel master-panel hidden" aria-labelledby="masterTitle">
+        <div class="panel-header panel-header-between master-panel-header">
+          <div class="master-heading">
+            <h3 id="masterTitle">Maestro de operaciones</h3>
+            <p id="masterInfo" class="master-info"></p>
+          </div>
+          <div class="master-actions">
+            <button
+              id="masterSaveBtn"
+              class="primary-button save-icon-button"
+              type="button"
+              aria-label="Guardar fila de basedatos"
+              title="Guardar fila de basedatos"
+              disabled
+            >
+              <svg class="save-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 3h11l3 3v15H5V3zm2 2v5h8V5H7zm0 14h10v-7H7v7zm2-2v-3h6v3H9z" fill="currentColor"/>
+              </svg>
+            </button>
+            <button
+              id="masterAddBtn"
+              class="primary-button master-add-button"
+              type="button"
+              aria-label="Agregar fila en basedatos"
+              title="Agregar fila en basedatos"
+              disabled
+            >
+              <span class="master-add-symbol">+</span>
+              <span>Agregar</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="table-wrapper master-table-wrapper">
+          <table class="master-table">
+            <colgroup id="masterTableColgroup"></colgroup>
+            <thead id="masterTableHead"></thead>
+            <tbody id="masterTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <datalist id="codigoSuggestions"></datalist>
+
+  <template id="costuraRowTemplate">
+    <tr class="costura-row">
+      <td>
+        <input class="table-input code-input" data-field="codigo" list="codigoSuggestions" inputmode="numeric" placeholder="Código">
+      </td>
+      <td><input class="table-input" data-field="bloque" type="text" readonly></td>
+      <td><input class="table-input" data-field="operaciones" type="text" readonly></td>
+      <td><input class="table-input number-cell center-cell" data-field="tiempoEstimado" type="text" readonly></td>
+      <td><input class="table-input center-cell" data-field="tipoMaq" type="text" readonly></td>
+      <td><input class="table-input number-cell center-cell" data-field="proteccion" type="text" readonly></td>
+      <td><input class="table-input center-cell" data-field="tipoPta" type="text" readonly></td>
+      <td><input class="table-input number-cell center-cell" data-field="tiempoMaq" type="text" readonly></td>
+      <td><input class="table-input number-cell center-cell" data-field="tiempoManual" type="text" readonly></td>
+      <td><input class="table-input number-cell center-cell" data-field="tiempoCotizacion" type="text" readonly></td>
+    </tr>
+  </template>
+
+  <template id="corteRowTemplate">
+    <tr class="costura-row">
+      <td><input class="table-input" data-field="operaciones" type="text"></td>
+      <td><input class="table-input number-cell center-cell" data-field="tiempoEstimadoCorte" type="text"></td>
+      <td><input class="table-input number-cell center-cell" data-field="tiempoEstimadoHabilitado" type="text"></td>
+      <td><input class="table-input number-cell center-cell" data-field="proteccion" type="text" readonly></td>
+      <td><input class="table-input center-cell" data-field="area" type="text"></td>
+      <td><input class="table-input number-cell center-cell" data-field="tiempoCorte" type="text" readonly></td>
+      <td><input class="table-input number-cell center-cell" data-field="tiempoHab" type="text" readonly></td>
+      <td><input class="table-input number-cell center-cell" data-field="tiempoCotizacion" type="text" readonly></td>
+    </tr>
+  </template>
+
+  <template id="acabadoRowTemplate">
+    <tr class="costura-row">
+      <td><input class="table-input" data-field="operaciones" type="text"></td>
+      <td><input class="table-input number-cell center-cell" data-field="tiempoEstimado" type="text" inputmode="decimal"></td>
+      <td><input class="table-input number-cell center-cell" data-field="proteccion" type="text" readonly></td>
+      <td><input class="table-input number-cell center-cell" data-field="tiempoCotizacion" type="text" readonly></td>
+    </tr>
+  </template>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <div id="loadingModal" class="modal-backdrop hidden" aria-hidden="true">
+    <div
+      id="loadingModalCard"
+      class="loading-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="loadingModalTitle"
+      tabindex="-1"
+    >
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <h3 id="loadingModalTitle">Cargando datos</h3>
+      <p>Espera un momento mientras se prepara la informacion.</p>
+    </div>
+  </div>
+
+  <div id="confirmModal" class="modal-backdrop hidden" aria-hidden="true">
+    <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+      <h3 id="confirmModalTitle">Confirmación</h3>
+      <p id="confirmModalMessage">Esta seguro que quiere eliminar todos los datos de la tabla?</p>
+      <div class="confirm-modal-actions">
+        <button id="confirmModalCancelBtn" class="tertiary-button" type="button">Cancelar</button>
+        <button id="confirmModalAcceptBtn" class="secondary-button" type="button">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="masterFilterMenu" class="context-menu master-filter-menu hidden" aria-hidden="true">
+    <div class="master-filter-menu-header">
+      <strong id="masterFilterTitle">Filtrar</strong>
+      <button id="masterFilterClearBtn" class="master-filter-clear-button" type="button">Limpiar</button>
+    </div>
+    <label id="masterFilterLabel" class="master-filter-label">Escribe el valor a buscar</label>
+    <input
+      id="masterFilterTextInput"
+      class="master-filter-control"
+      type="text"
+      placeholder="Escribe para filtrar"
+      autocomplete="off"
+      spellcheck="false"
+    >
+    <select id="masterFilterSelect" class="master-filter-control hidden" aria-label="Seleccionar filtro"></select>
+  </div>
+
+  <div id="codeContextMenu" class="context-menu hidden" aria-hidden="true">
+    <button class="context-menu-button" type="button" data-action="insert-above">
+      <span class="context-menu-icon">+</span>
+      <span>Insertar 1 fila encima</span>
+    </button>
+    <button class="context-menu-button" type="button" data-action="insert-below">
+      <span class="context-menu-icon">+</span>
+      <span>Insertar 1 fila debajo</span>
+    </button>
+    <button class="context-menu-button is-danger" type="button" data-action="delete-row">
+      <svg class="context-menu-trash-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9 3h6l1 2h4v2H4V5h4l1-2zm1 6h2v8h-2V9zm4 0h2v8h-2V9zM7 9h2v8H7V9z" fill="currentColor"/>
+      </svg>
+      <span>Eliminar fila</span>
+    </button>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
