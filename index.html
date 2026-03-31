@@ -133,6 +133,28 @@
                 <path d="M5 3h11l3 3v15H5V3zm2 2v5h8V5H7zm0 14h10v-7H7v7zm2-2v-3h6v3H9z" fill="currentColor"/>
               </svg>
             </button>
+            <button
+              id="copyPrototypeBtn"
+              class="save-icon-button copy-prototype-button"
+              type="button"
+              aria-label="Copiar"
+              title="Copiar"
+            >
+              <svg class="save-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9 3h8a2 2 0 0 1 2 2v10h-2V5H9V3zm-4 4h8a2 2 0 0 1 2 2v12H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zm0 2v10h8V9H5z" fill="currentColor"/>
+              </svg>
+            </button>
+            <button
+              id="clearPrototypeBtn"
+              class="save-icon-button clear-prototype-button"
+              type="button"
+              aria-label="Limpiar"
+              title="Limpiar"
+            >
+              <svg class="save-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6.1 3.6 20.4 17.9l-1.5 1.5-4.9-4.9-1.4 1.4-1.1-1.1-4.4 5.7H3.5v-3.6l5.7-4.4-1.1-1.1 1.4-1.4-4.9-4.9 1.5-1.5zm4.6 9.5-5.3 4.1v1.3h1.3l4.1-5.3-.1-.1z" fill="currentColor"/>
+              </svg>
+            </button>
           </div>
         </div>
 
@@ -165,7 +187,7 @@
           </label>
           <label class="field">
             <span>IDEM</span>
-            <input id="idemInput" type="text" inputmode="numeric" maxlength="2" pattern="\d{1,2}" autocomplete="off">
+            <input id="idemInput" type="text" inputmode="numeric" maxlength="5" pattern="\d{5}" autocomplete="off">
           </label>
           <label class="field">
             <span>Estilo</span>
@@ -196,19 +218,15 @@
       </section>
 
       <div class="tabs-container panel-tabs">
-        <button id="tabCostura" class="tab-button is-active" type="button" data-target="costuraPanel">Costura</button>
-        <button id="tabCorte" class="tab-button" type="button" data-target="cortePanel">Corte</button>
+        <button id="tabCorte" class="tab-button is-active" type="button" data-target="cortePanel">Corte</button>
+        <button id="tabCostura" class="tab-button" type="button" data-target="costuraPanel">Costura</button>
         <button id="tabAcabado" class="tab-button" type="button" data-target="acabadoPanel">Acabados</button>
         <button id="tabResumen" class="tab-button" type="button" data-target="resumenPanel">RESUMEN</button>
       </div>
 
-      <section id="costuraPanel" class="panel table-panel" aria-label="Costura">
+      <section id="costuraPanel" class="panel table-panel hidden" aria-label="Costura">
         <div class="panel-header panel-header-between">
-          <div>
-            <p class="eyebrow">Costura</p>
-          </div>
-
-          <div class="table-actions">
+          <div class="table-actions table-header-actions">
             <button id="addRowBtn" class="table-action-button table-action-button-add" type="button" aria-label="Agregar fila" title="Agregar fila">+</button>
             <button id="removeRowBtn" class="table-action-button table-action-button-remove" type="button" aria-label="Eliminar última fila" title="Eliminar última fila">-</button>
             <button id="clearTableBtn" class="table-action-button table-action-button-clear" type="button" aria-label="Limpiar tabla" title="Limpiar tabla">
@@ -264,12 +282,9 @@
         </div>
       </section>
 
-      <section id="cortePanel" class="panel table-panel hidden" aria-label="Corte">
+      <section id="cortePanel" class="panel table-panel" aria-label="Corte">
         <div class="panel-header panel-header-between">
-          <div>
-            <p class="eyebrow">Corte</p>
-          </div>
-          <div class="table-actions">
+          <div class="table-actions table-header-actions">
             <button id="addCorteRowBtn" class="table-action-button table-action-button-add" type="button" title="Agregar fila">+</button>
             <button id="removeCorteRowBtn" class="table-action-button table-action-button-remove" type="button" title="Eliminar última fila">-</button>
             <button id="clearCorteTableBtn" class="table-action-button table-action-button-clear" type="button" title="Limpiar tabla">
@@ -320,10 +335,7 @@
 
       <section id="acabadoPanel" class="panel table-panel hidden" aria-label="Acabados">
         <div class="panel-header panel-header-between">
-          <div>
-            <p class="eyebrow">Acabados</p>
-          </div>
-          <div class="table-actions">
+          <div class="table-actions table-header-actions">
             <button id="addAcabadoRowBtn" class="table-action-button table-action-button-add" type="button" title="Agregar fila">+</button>
             <button id="removeAcabadoRowBtn" class="table-action-button table-action-button-remove" type="button" title="Eliminar última fila">-</button>
             <button id="clearAcabadoTableBtn" class="table-action-button table-action-button-clear" type="button" title="Limpiar tabla">
@@ -361,11 +373,6 @@
       </section>
 
       <section id="resumenPanel" class="panel table-panel hidden" aria-label="RESUMEN">
-        <div class="panel-header panel-header-between">
-          <div>
-            <p class="eyebrow">RESUMEN</p>
-          </div>
-        </div>
         <div class="table-wrapper resumen-wrapper">
           <table class="costura-table resumen-table">
             <colgroup>
@@ -519,6 +526,29 @@
       <div class="confirm-modal-actions">
         <button id="confirmModalCancelBtn" class="tertiary-button" type="button">Cancelar</button>
         <button id="confirmModalAcceptBtn" class="secondary-button" type="button">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="copyPrototypeModal" class="modal-backdrop hidden" aria-hidden="true">
+    <div class="confirm-modal copy-prototype-modal" role="dialog" aria-modal="true" aria-labelledby="copyPrototypeModalTitle">
+      <h3 id="copyPrototypeModalTitle">Copiar desde PROTO</h3>
+      <p>Ingresa el PROTO base para copiar la ultima version disponible a Nuevo prototipo.</p>
+      <label class="field copy-prototype-field" for="copyPrototypeInput">
+        <span>PROTO</span>
+        <input
+          id="copyPrototypeInput"
+          type="text"
+          inputmode="numeric"
+          maxlength="5"
+          pattern="\d{5}"
+          autocomplete="off"
+          placeholder="00000"
+        >
+      </label>
+      <div class="confirm-modal-actions">
+        <button id="copyPrototypeCancelBtn" class="tertiary-button" type="button">Cancelar</button>
+        <button id="copyPrototypeAcceptBtn" class="secondary-button" type="button">Copiar</button>
       </div>
     </div>
   </div>
